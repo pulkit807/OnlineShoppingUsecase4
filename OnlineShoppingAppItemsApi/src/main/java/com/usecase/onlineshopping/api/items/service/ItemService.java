@@ -1,0 +1,27 @@
+package com.usecase.onlineshopping.api.items.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ItemService {
+	@Autowired
+	private ItemRepository customerRepository;
+
+	public List<Item> getAllItems() {
+		List<Item> items = new ArrayList<>();
+		customerRepository.findAll().forEach(items::add);
+		return items;
+	}
+
+	public Item getItemByName(String name) {
+		List<Item> result = customerRepository.findByName(name);
+		if(result.isEmpty()) {
+			return null;
+		}
+		return result.get(0);
+	}
+}

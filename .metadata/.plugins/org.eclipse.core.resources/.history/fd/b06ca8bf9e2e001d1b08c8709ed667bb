@@ -1,0 +1,58 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+
+import com.usecase.onlineshopping.api.sos.model.OrderLineItem;
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+import com.usecase.onlineshopping.api.sos.repository.SalesOrderRepository;
+
+@Service
+public class SalesOrderService {
+
+	@Autowired
+	CustomerSOSService customerSOSService;
+
+	@Value("${rabbitmq.routingkey}")
+	static String ITEM_SERVICE_URL;
+
+	@Autowired
+	RestTemplate restTemplate;
+
+	@Autowired
+	private SalesOrderRepository salesOrderRepository;
+
+	public SalesOrder createOrder(SalesOrder order) {
+		if(customerSOSService.validateUser(order.getCustId())) {
+			System.out.println("passed stage 1");
+			if(validate(order.getOrderLineItems())){
+				System.out.println("passed stage 2");
+				SalesOrder salesOrder = salesOrderRepository.save(order);
+				return salesOrder;
+			}
+		}
+		
+		return null;
+	}
+
+	private Boolean validate(List<OrderLineItem> orderLineItems) {
+		for (OrderLineItem item : orderLineItems) {
+			System.out.println(ITEM_SERVICE_URL + item.getItemName());
+			ResponseEntity body = restTemplate
+					.exchange(ITEM_SERVICE_URL + item.getItemName(), HttpMethod.GET, null, ResponseEntity.class)
+					.getBody();
+			if(body==null) return false;
+		}
+		return true;
+
+	}
+
+}

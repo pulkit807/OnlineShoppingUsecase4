@@ -1,0 +1,5 @@
+package com.usecase.onlineshopping.api.items.security;
+
+public class ItemsApiSecurityConfig {
+
+}

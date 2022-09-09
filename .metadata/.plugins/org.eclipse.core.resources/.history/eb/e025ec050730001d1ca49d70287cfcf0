@@ -1,0 +1,34 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+public class CustomException extends RuntimeException {
+	private String message;
+    public CustomerNotFoundException(String message) {
+        super();
+        this.message=message;
+    }
+	public String getMessage() {
+		return message;
+	}
+}
+
+class ItemNotFoundException extends RuntimeException {
+	private String message;
+    public ItemNotFoundException(String message) {
+        super();
+        this.message=message;
+    }
+	public String getMessage() {
+		return message;
+	}
+}
+
+class OrderNotFoundException extends RuntimeException {
+	private String message;
+    public OrderNotFoundException(String message) {
+        super();
+        this.message=message;
+    }
+	public String getMessage() {
+		return message;
+	}
+}

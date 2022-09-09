@@ -1,0 +1,8 @@
+package com.usecase.onlineshopping.api.customer.service;
+
+//import org.springframework.security.core.userdetails.UserDetailsService;
+
+//public interface UserService extends UserDetailsService {
+//	UserDto createUser(UserDto UserDetails);
+//	UserDto getUserDetailsByEmail(String email);
+//}

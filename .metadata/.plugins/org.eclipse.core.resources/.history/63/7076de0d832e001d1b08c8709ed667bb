@@ -1,0 +1,16 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+
+public class SalesOrderService {
+	
+	@Autowired
+	CustomerSOSService customerSOSService;
+	
+	public SalesOrder createOrder(SalesOrder order) {
+		customerSOSService.validateUser(order.getCustId());
+	}
+	
+}

@@ -1,0 +1,32 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.usecase.onlineshopping.api.sos.model.CustomerSOS;
+import com.usecase.onlineshopping.api.sos.repository.CustomerSOSRepository;
+
+@Service
+public class CustomerSOSService {
+	@Autowired
+	private CustomerSOSRepository customerRepository;
+
+	public List<CustomerSOS> getAllCustomers() {
+		List<CustomerSOS> customers = new ArrayList<>();
+		customerRepository.findAll().forEach(customers::add);
+		return customers;
+	}
+
+	public CustomerSOS createCustomer(CustomerSOS customer) {
+		return customerRepository.save(customer);
+	}
+	
+	public Boolean validateUser(long customerId) {
+		Optional<CustomerSOS> customerOptional = customerRepository.findById(customerId);
+		return customerOptional.isPresent();
+	}
+}

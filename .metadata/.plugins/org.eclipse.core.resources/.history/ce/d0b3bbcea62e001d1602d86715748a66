@@ -1,0 +1,5 @@
+package com.usecase.onlineshopping.api.sos.dto;
+
+public class GetOrderByCustIdResponseModel {
+
+}

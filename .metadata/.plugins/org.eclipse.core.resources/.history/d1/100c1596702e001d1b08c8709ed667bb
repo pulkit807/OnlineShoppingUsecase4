@@ -1,0 +1,12 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+
+public class SalesOrderService {
+
+	public SalesOrder createOrder(SalesOrder order) {
+		
+		
+	}
+	
+}

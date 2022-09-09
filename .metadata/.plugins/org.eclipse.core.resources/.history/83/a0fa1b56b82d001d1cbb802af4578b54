@@ -1,0 +1,5 @@
+package com.usecase.onlineshopping.api.customer.ui.model;
+
+public class GetCustomersResponseModel {
+
+}

@@ -1,0 +1,83 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.FallbackFactory;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.usecase.onlineshopping.api.sos.model.ItemResponseModel;
+
+import feign.FeignException;
+import feign.auth.BasicAuthRequestInterceptor;
+
+@FeignClient(name = "items-ws", fallbackFactory = ItemsFallbackFactory.class, configuration = ItemsServerClientConfiguration.class)
+public interface ItemsServerClient {
+
+	@GetMapping("/items/{itemName}")
+	public ItemResponseModel getItemByName(@PathVariable String itemName);
+}
+
+@Configuration
+class ItemsServerClientConfiguration {
+	
+
+	@Bean
+	public BasicAuthRequestInterceptor basicAuthRequestInterceptor() {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+		ConfigurableEnvironment env = context.getEnvironment();
+
+		String username = env.getProperty("item.service.username");
+		System.out.println("username - "+username);
+		String password = env.getProperty("items.service.password");
+		return new BasicAuthRequestInterceptor(username, password);
+	}
+}
+
+@Component
+class ItemsFallbackFactory implements FallbackFactory<ItemsServerClient> {
+
+	@Override
+	public ItemsServerClient create(Throwable cause) {
+		// TODO Auto-generated method stub
+		return new ItemsServiceClientFallback(cause);
+	}
+
+}
+
+class ItemsServiceClientFallback implements ItemsServerClient {
+
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	private final Throwable cause;
+
+	public ItemsServiceClientFallback(Throwable cause) {
+		this.cause = cause;
+	}
+
+	@Override
+	public ItemResponseModel getItemByName(String itemName) {
+		// TODO Auto-generated method stub
+
+		if (cause instanceof FeignException && ((FeignException) cause).status() == 404) {
+			logger.error("404 error took place when getItemByName was called with userId: " + itemName
+					+ ". Error message: " + cause.getLocalizedMessage());
+		} else {
+			logger.error("Other error took place: " + cause.getLocalizedMessage());
+		}
+
+		return null;
+	}
+
+}

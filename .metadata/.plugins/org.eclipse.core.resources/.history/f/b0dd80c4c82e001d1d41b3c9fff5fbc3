@@ -1,0 +1,5 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+public class ItemsServerClient {
+
+}

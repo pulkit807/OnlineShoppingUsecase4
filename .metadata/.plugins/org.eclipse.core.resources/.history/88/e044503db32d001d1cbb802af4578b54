@@ -1,0 +1,23 @@
+package com.usecase.onlineshopping.api.customer.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomerService {
+	@Autowired
+	private CustomerRepository customerRepository;
+
+	public List<Customer> getAllUsers() {
+		List<Customer> customers = new ArrayList<>();
+		customerRepository.findAll().forEach(customers::add);
+		return customers;
+	}
+
+	public void createCustomer(Customer customer) {
+		customerRepository.save(customer);
+	}
+}

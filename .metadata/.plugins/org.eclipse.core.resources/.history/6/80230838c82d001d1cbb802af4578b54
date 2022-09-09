@@ -1,0 +1,22 @@
+server.port=8082
+spring.application.name=api-gateway
+eureka.client.serviceUrl.defaultZone = http://localhost:8010/eureka
+spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+
+spring.cloud.gateway.routes[0].id=users-status-check
+spring.cloud.gateway.routes[0].uri= lb://customers-ws
+spring.cloud.gateway.routes[0].predicates[0]=Path=/customers-ws/**
+spring.cloud.gateway.routes[0].predicates[1]=Method=GET,POST
+#spring.cloud.gateway.routes[0].predicates[2]=Header=Authorization, Bearer (.*)
+spring.cloud.gateway.routes[0].filters[0]=RemoveRequestHeader=Cookie
+spring.cloud.gateway.routes[0].filters[1]=RewritePath=/customers-ws/(?<segment>.*), /$\{segment}
+#spring.cloud.gateway.routes[0].filters[2]=AuthorizationHeaderFilter
+
+spring.cloud.gateway.routes[1].id=itams-ws
+spring.cloud.gateway.routes[1].uri= lb://items-ws
+spring.cloud.gateway.routes[1].predicates[0]=Path=/items-ws/**
+spring.cloud.gateway.routes[1].predicates[1]=Method=GET,POST
+#spring.cloud.gateway.routes[0].predicates[2]=Header=Authorization, Bearer (.*)
+spring.cloud.gateway.routes[1].filters[0]=RemoveRequestHeader=Cookie
+spring.cloud.gateway.routes[1].filters[1]=RewritePath=/customers-ws/(?<segment>.*), /$\{segment}
+#spring.cloud.gateway.routes[0].filters[2]=AuthorizationHeaderFilter

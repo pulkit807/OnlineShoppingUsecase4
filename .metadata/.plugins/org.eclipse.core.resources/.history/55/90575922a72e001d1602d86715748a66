@@ -1,0 +1,14 @@
+package com.usecase.onlineshopping.api.sos.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.usecase.onlineshopping.api.items.service.Item;
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+
+@Repository
+public interface SalesOrderRepository extends JpaRepository<SalesOrder, Long> {
+	List<SalesOrder> findByCustId(int custId);
+}

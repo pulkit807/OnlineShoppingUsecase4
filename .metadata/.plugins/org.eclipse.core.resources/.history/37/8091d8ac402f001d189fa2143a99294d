@@ -1,0 +1,5 @@
+package com.usecase.onlineshopping.api.gateway;
+
+public class AuthorizationHeaderFilter {
+
+}

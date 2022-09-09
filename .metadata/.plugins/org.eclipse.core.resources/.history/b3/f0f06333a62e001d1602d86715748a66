@@ -1,0 +1,19 @@
+package com.usecase.onlineshopping.api.sos;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+
+@SpringBootApplication
+public class OnlineShoppingAppSalesOrderServiceApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(OnlineShoppingAppSalesOrderServiceApplication.class, args);
+	}
+	
+	@Bean
+	   public RestTemplate getRestTemplate() {
+	      return new RestTemplate();
+	   }
+}

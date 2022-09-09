@@ -1,0 +1,5 @@
+package com.usecase.onlineshopping.api.sos.messageListener;
+
+public class RabbitMQConfig {
+
+}

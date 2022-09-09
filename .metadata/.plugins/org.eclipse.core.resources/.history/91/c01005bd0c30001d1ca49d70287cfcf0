@@ -1,0 +1,90 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.usecase.onlineshopping.api.sos.model.ItemResponseModel;
+import com.usecase.onlineshopping.api.sos.model.OrderLineItem;
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+import com.usecase.onlineshopping.api.sos.repository.SalesOrderRepository;
+
+@Service
+public class SalesOrderService {
+
+	@Autowired
+	CustomerSOSService customerSOSService;
+	
+	@Autowired
+	Environment env;
+	
+	@Autowired
+	ItemsServerClient itemsServerClient;
+
+//	static String ITEM_SERVICE_URL;
+//
+//    @Value("${item.service.url}")
+//    public void setItemServiceUrl(String itemServiceUrl) {
+//    	ITEM_SERVICE_URL = itemServiceUrl;
+//    }
+//
+//	@Autowired
+//	RestTemplate restTemplate;
+
+	@Autowired
+	private SalesOrderRepository salesOrderRepository;
+
+	public SalesOrder createOrder(SalesOrder order) throws CustomException{
+		if(customerSOSService.validateUser(order.getCustId())) {
+			
+			if(validate(order.getOrderLineItems())){
+				SalesOrder salesOrder = salesOrderRepository.save(order);
+				return salesOrder;
+			}
+			throw(new CustomException("Some Item(s) Not Found"));
+		}
+		throw(new CustomException("Customer Not Found"));
+	}
+
+	private Boolean validate(List<OrderLineItem> orderLineItems) {
+		return orderLineItems.stream().allMatch(item -> validateItem(item));
+	}
+
+	private Boolean validateItem(OrderLineItem item) {
+		return itemsServerClient.getItemByName(item.getItemName())!=null;
+	}
+
+	public List<SalesOrder> findByCustId(long custId) throws  CustomException{
+		System.out.println(custId);
+		if(customerSOSService.validateUser(custId)) {
+		List<SalesOrder> result = salesOrderRepository.findByCustId(custId);
+		if(result.isEmpty()) {
+
+			throw(new CustomException("Order for the customer Not Found"));
+		}
+		return result;
+		}
+		throw(new CustomException("Customer Not Found"));
+		
+	}
+
+	public SalesOrder findById(long orderId) throws CustomException {
+		System.out.println(orderId);
+		Optional<SalesOrder> result = salesOrderRepository.findById(orderId);
+		if(result.isEmpty()) {
+
+			throw(new CustomException("Order for the customer Not Found"));
+		}
+		return result.get();
+	}
+
+}
+
