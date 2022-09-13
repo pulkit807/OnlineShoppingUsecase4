@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.usecase.onlineshopping.api.sos.model.OrderLineItem;
 import com.usecase.onlineshopping.api.sos.model.SalesOrder;
 import com.usecase.onlineshopping.api.sos.repository.SalesOrderRepository;
+import com.usecase.onlineshopping.api.sos.exception.*;
 
 @Service
 public class SalesOrderService {
@@ -30,16 +31,16 @@ public class SalesOrderService {
 	public SalesOrder createOrder(SalesOrder order) throws CustomException{
 		if(customerSOSService.validateUser(order.getCustId())) {
 			
-			if(validate(order.getOrderLineItems())){
+			if(validateItems(order.getOrderLineItems())){
 				SalesOrder salesOrder = salesOrderRepository.save(order);
 				return salesOrder;
 			}
-			throw(new CustomException("Some Item(s) Not Found"));
+			throw(new ItemsNotFound("Some Item(s) Not Found"));
 		}
-		throw(new CustomException("Customer Not Found"));
+		throw(new CustomerNotFound("Customer Not Found"));
 	}
 
-	private Boolean validate(List<OrderLineItem> orderLineItems) {
+	private Boolean validateItems(List<OrderLineItem> orderLineItems) {
 		return orderLineItems.stream().allMatch(item -> validateItem(item));
 	}
 
@@ -52,11 +53,11 @@ public class SalesOrderService {
 		List<SalesOrder> result = salesOrderRepository.findByCustId(custId);
 		if(result.isEmpty()) {
 
-			throw(new CustomException("Order for the customer Not Found"));
+			throw(new OrderNotFound("Order for the customer Not Found"));
 		}
 		return result;
 		}
-		throw(new CustomException("Customer Not Found"));
+		throw(new CustomerNotFound("Customer Not Found"));
 		
 	}
 
@@ -64,7 +65,7 @@ public class SalesOrderService {
 		Optional<SalesOrder> result = salesOrderRepository.findById(orderId);
 		if(result.isEmpty()) {
 
-			throw(new CustomException("Order for the customer Not Found"));
+			throw(new OrderNotFound("Order for the customer Not Found"));
 		}
 		return result.get();
 	}

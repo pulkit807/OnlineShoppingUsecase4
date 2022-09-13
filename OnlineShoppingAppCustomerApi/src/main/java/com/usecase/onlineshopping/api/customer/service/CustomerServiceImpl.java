@@ -24,4 +24,8 @@ public class CustomerServiceImpl implements CustomerService {
 	public Customer createCustomer(Customer customer) {
 		return customerRepository.save(customer);
 	}
+	
+	public void deleteCustomer(long custId) {
+		customerRepository.deleteById(custId);
+	}
 }

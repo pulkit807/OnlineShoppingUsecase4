@@ -1,0 +1,15 @@
+package com.usecase.onlineshopping.api.customer.exception;
+
+public class SalesOrderConnectionFailed extends  CustomException{
+	private int custId;
+
+	public SalesOrderConnectionFailed(String message,int custId) {
+		super(message);
+		this.custId=custId;
+	}
+
+	public int getCustId() {
+		return custId;
+	}
+	
+}

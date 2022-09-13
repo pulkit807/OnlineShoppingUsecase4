@@ -1,8 +1,0 @@
-package com.usecase.onlineshopping.api.customer.service;
-
-import org.springframework.data.repository.CrudRepository;  
-    
-public interface CustomerSOSRepository extends CrudRepository<CustomerSOS, Integer>   
-{
-	
-}    

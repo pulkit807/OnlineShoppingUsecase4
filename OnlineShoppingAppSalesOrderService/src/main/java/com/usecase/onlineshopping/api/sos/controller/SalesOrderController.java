@@ -1,7 +1,6 @@
 package com.usecase.onlineshopping.api.sos.controller;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.usecase.onlineshopping.api.sos.dto.GetOrderByCustIdResponseModel;
 import com.usecase.onlineshopping.api.sos.dto.GetOrderByIdResponseModel;
 import com.usecase.onlineshopping.api.sos.dto.SalesOrderDTO;
 import com.usecase.onlineshopping.api.sos.model.SalesOrder;
-import com.usecase.onlineshopping.api.sos.service.CustomException;
 import com.usecase.onlineshopping.api.sos.service.CustomerSOSService;
 import com.usecase.onlineshopping.api.sos.service.SalesOrderService;
 
@@ -46,42 +43,32 @@ public class SalesOrderController {
 	}
 
 	@PostMapping()
-	public ResponseEntity createOrder(@RequestBody SalesOrderDTO orderDetails) {
-		try {
-			SalesOrder order = modelMapper.map(orderDetails, SalesOrder.class);
-			SalesOrder createdOrder = salesOrderService.createOrder(order);
+	public ResponseEntity<SalesOrderDTO> createOrder(@RequestBody SalesOrderDTO orderDetails) {
 
-			SalesOrderDTO responseBody = modelMapper.map(createdOrder, SalesOrderDTO.class);
-			return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-		} catch (CustomException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		}
+		SalesOrder order = modelMapper.map(orderDetails, SalesOrder.class);
+		SalesOrder createdOrder = salesOrderService.createOrder(order);
+		SalesOrderDTO responseBody = modelMapper.map(createdOrder, SalesOrderDTO.class);
+		return ResponseEntity.status(HttpStatus.OK).body(responseBody);
 	}
 
 	@GetMapping()
-	public ResponseEntity getorderByCustId(@RequestParam long custId) {
+	public ResponseEntity<List<GetOrderByCustIdResponseModel>> getorderByCustId(@RequestParam long custId) {
 		System.out.println(custId);
-		try {
-			List<SalesOrder> foundOrders = salesOrderService.findByCustId(custId);
-			List<GetOrderByCustIdResponseModel> responseBody = foundOrders.stream().map(order -> {
-				return modelMapper.map(order, GetOrderByCustIdResponseModel.class);
-			}).toList();
-			return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-		} catch (CustomException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		}
+
+		List<SalesOrder> foundOrders = salesOrderService.findByCustId(custId);
+		List<GetOrderByCustIdResponseModel> responseBody = foundOrders.stream().map(order -> {
+			return modelMapper.map(order, GetOrderByCustIdResponseModel.class);
+		}).toList();
+		return ResponseEntity.status(HttpStatus.OK).body(responseBody);
 	}
 
 	@GetMapping("/{orderId}")
-	public ResponseEntity getorderById(@PathVariable long orderId) {
-		try {
-			System.out.println(orderId);
-			SalesOrder foundOrder = salesOrderService.findById(orderId);
-			GetOrderByIdResponseModel responseBody = modelMapper.map(foundOrder, GetOrderByIdResponseModel.class);
-			return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-		} catch (CustomException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		}
+	public ResponseEntity<GetOrderByIdResponseModel> getorderById(@PathVariable long orderId) {
+
+		System.out.println(orderId);
+		SalesOrder foundOrder = salesOrderService.findById(orderId);
+		GetOrderByIdResponseModel responseBody = modelMapper.map(foundOrder, GetOrderByIdResponseModel.class);
+		return ResponseEntity.status(HttpStatus.OK).body(responseBody);
 
 	}
 }

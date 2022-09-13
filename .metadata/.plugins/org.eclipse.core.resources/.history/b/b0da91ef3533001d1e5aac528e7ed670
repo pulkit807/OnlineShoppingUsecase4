@@ -1,0 +1,74 @@
+package com.usecase.onlineshopping.api.sos.service;
+
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+
+import com.usecase.onlineshopping.api.sos.model.OrderLineItem;
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+import com.usecase.onlineshopping.api.sos.repository.SalesOrderRepository;
+import com.usecase.onlineshopping.api.sos.exception.*;
+
+@Service
+public class SalesOrderService {
+
+	@Autowired
+	CustomerSOSService customerSOSService;
+	
+	@Autowired
+	Environment env;
+	
+	@Autowired
+	ItemsServerClient itemsServerClient;
+
+	@Autowired
+	private SalesOrderRepository salesOrderRepository;
+
+	public SalesOrder createOrder(SalesOrder order) throws CustomException{
+		if(customerSOSService.validateUser(order.getCustId())) {
+			
+			if(validate(order.getOrderLineItems())){
+				SalesOrder salesOrder = salesOrderRepository.save(order);
+				return salesOrder;
+			}
+			throw(new ItemsNotFound("Some Item(s) Not Found"));
+		}
+		throw(new CustomerNotFound("Customer Not Found"));
+	}
+
+	private Boolean validate(List<OrderLineItem> orderLineItems) {
+		return orderLineItems.stream().allMatch(item -> validateItem(item));
+	}
+
+	private Boolean validateItem(OrderLineItem item) {
+		return itemsServerClient.getItemByName(item.getItemName())!=null;
+	}
+
+	public List<SalesOrder> findByCustId(long custId) throws  CustomException{
+		if(customerSOSService.validateUser(custId)) {
+		List<SalesOrder> result = salesOrderRepository.findByCustId(custId);
+		if(result.isEmpty()) {
+
+			throw(new OrderNotFound("Order for the customer Not Found"));
+		}
+		return result;
+		}
+		throw(new CustomerNotFound("Customer Not Found"));
+		
+	}
+
+	public SalesOrder findById(long orderId) throws CustomException {
+		Optional<SalesOrder> result = salesOrderRepository.findById(orderId);
+		if(result.isEmpty()) {
+
+			throw(new OrderNotFound("Order for the customer Not Found"));
+		}
+		return result.get();
+	}
+
+}
+

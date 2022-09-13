@@ -1,0 +1,9 @@
+package com.usecase.onlineshopping.api.customer.exception;
+
+public class SalesOrderConnectionFailed extends  CustomException{
+
+	public Sales(String message) {
+		super(message);
+	}
+	
+}

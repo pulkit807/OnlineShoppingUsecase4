@@ -1,0 +1,78 @@
+package com.usecase.onlineshopping.api.sos.controller;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.usecase.onlineshopping.api.sos.dto.GetOrderByCustIdResponseModel;
+import com.usecase.onlineshopping.api.sos.dto.GetOrderByIdResponseModel;
+import com.usecase.onlineshopping.api.sos.dto.SalesOrderDTO;
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+import com.usecase.onlineshopping.api.sos.service.CustomerSOSService;
+import com.usecase.onlineshopping.api.sos.service.SalesOrderService;
+
+@RestController()
+@RequestMapping("/orders")
+public class SalesOrderController {
+	@Autowired
+	private Environment env;
+
+	@Autowired
+	CustomerSOSService customerSOSService;
+
+	@Autowired
+	SalesOrderService salesOrderService;
+
+	@Autowired
+	ModelMapper modelMapper;
+
+	@GetMapping("/status/check")
+	public String status() {
+		return "Working on port " + env.getProperty("local.server.port");
+	}
+
+	@PostMapping()
+	public ResponseEntity createOrder(@RequestBody SalesOrderDTO orderDetails) {
+		
+			SalesOrder order = modelMapper.map(orderDetails, SalesOrder.class);
+			SalesOrder createdOrder = salesOrderService.createOrder(order);
+			SalesOrderDTO responseBody = modelMapper.map(createdOrder, SalesOrderDTO.class);
+			return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+	}
+
+	@GetMapping()
+	public ResponseEntity getorderByCustId(@RequestParam long custId) {
+		System.out.println(custId);
+
+			List<SalesOrder> foundOrders = salesOrderService.findByCustId(custId);
+			List<GetOrderByCustIdResponseModel> responseBody = foundOrders.stream().map(order -> {
+				return modelMapper.map(order, GetOrderByCustIdResponseModel.class);
+			}).toList();
+			return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+	}
+
+	@GetMapping("/{orderId}")
+	public ResponseEntity getorderById(@PathVariable long orderId) {
+
+			System.out.println(orderId);
+			SalesOrder foundOrder = salesOrderService.findById(orderId);
+			GetOrderByIdResponseModel responseBody = modelMapper.map(foundOrder, GetOrderByIdResponseModel.class);
+			return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+
+	}
+}

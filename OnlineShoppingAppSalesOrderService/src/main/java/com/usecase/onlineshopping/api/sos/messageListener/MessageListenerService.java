@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.usecase.onlineshopping.api.sos.dto.CustomerDTO;
 import com.usecase.onlineshopping.api.sos.model.CustomerSOS;
-import com.usecase.onlineshopping.api.sos.model.SalesOrder;
 import com.usecase.onlineshopping.api.sos.service.CustomerSOSService;
 
 @Component

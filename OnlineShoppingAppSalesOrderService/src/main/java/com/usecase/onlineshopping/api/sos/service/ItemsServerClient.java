@@ -1,18 +1,13 @@
 package com.usecase.onlineshopping.api.sos.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

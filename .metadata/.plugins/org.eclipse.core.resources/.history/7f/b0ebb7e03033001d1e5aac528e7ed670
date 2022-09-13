@@ -1,0 +1,21 @@
+package com.usecase.onlineshopping.api.sos.exception;
+
+abstract class CustomException extends RuntimeException {
+	private String message;
+    public CustomException(String message) {
+        super();
+        this.message=message;
+    }
+	public String getMessage() {
+		return message;
+	}
+}
+
+class CustomerNotFound extends  CustomException{
+
+	public CustomerNotFound(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+	
+}

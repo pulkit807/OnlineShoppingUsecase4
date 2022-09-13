@@ -1,0 +1,34 @@
+package com.usecase.onlineshopping.api.sos.messageListener;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
+import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.usecase.onlineshopping.api.sos.dto.CustomerDTO;
+import com.usecase.onlineshopping.api.sos.model.CustomerSOS;
+import com.usecase.onlineshopping.api.sos.model.SalesOrder;
+import com.usecase.onlineshopping.api.sos.service.CustomerSOSService;
+
+@Component
+public class MessageListenerService implements RabbitListenerConfigurer {
+	@Autowired
+	CustomerSOSService customerSOSService;
+	ModelMapper modelMapper = new ModelMapper();
+
+	@Override
+	public void configureRabbitListeners(RabbitListenerEndpointRegistrar rabbitListenerEndpointRegistrar) {
+	}
+
+	@RabbitListener(queues = "${rabbitmq.queue}")
+	public void receivedMessage(CustomerDTO customer) {
+
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		CustomerSOS customerSOS = modelMapper.map(customer, CustomerSOS.class);
+		CustomerSOS createdCustomer = customerSOSService.createCustomer(customerSOS);
+
+	}
+}

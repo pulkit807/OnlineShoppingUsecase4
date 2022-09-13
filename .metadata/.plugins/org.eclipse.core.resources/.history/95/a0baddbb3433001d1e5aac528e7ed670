@@ -1,0 +1,20 @@
+package com.usecase.onlineshopping.api.sos.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.usecase.onlineshopping.api.sos.exception.ErrorResponse;
+
+@RestControllerAdvice
+public class SaleOrderControllerAdvice {
+	@ExceptionHandler(value = { CustomerNotFound.class })
+
+    public ResponseEntity<ErrorResponse> badRequest(CustomerNotFound ex)
+    {
+		ErrorResponse err= new ErrorResponse(400, "Bad Request");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err); 
+    }
+
+	
+}
