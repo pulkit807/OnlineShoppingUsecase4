@@ -51,8 +51,8 @@ public class CustomerController {
 		try {
 			rabbitMQSender.send(createdCustomer);
 		} catch (Exception ex) {
-			throw new SalesOrderConnectionFailed("Connection to Sales order service failed. No data stored.",
-					createdCustomer.getId());
+			throw( new SalesOrderConnectionFailed("Connection to Sales order service failed. No data stored.",
+					createdCustomer.getId()));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
 	}

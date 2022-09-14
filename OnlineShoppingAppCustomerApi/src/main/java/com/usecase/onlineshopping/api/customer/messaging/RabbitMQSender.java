@@ -21,12 +21,8 @@ public class RabbitMQSender {
 	private String routingkey;	
 	
 	public void send(Customer customer) {
-		try {
 		rabbitTemplate.convertAndSend(exchange, routingkey, customer);
 		System.out.println("Successfuly Sent - "+customer.toString());
-		}catch(Exception e) {
-			System.out.println(e);
-		}
 	    
 	}
 }
